@@ -4,13 +4,18 @@ import copy
 
 def heurestic(p):
     h = 0
+    miss_placed = 0 
     l = len(p)
     for i in range(l):
         for j in range(l):
+            if p[i][j] != (i * l) + (j):
+                miss_placed += 1
             if p[i][j] == 0:
                 continue
             h += abs(i - int((p[i][j])/l)) + abs(j - (p[i][j]%l))
+
     return h
+
 class Frontier:
     def __init__(self):
         self.e = []
@@ -41,26 +46,26 @@ def move(m):
         i += 1
     j = m[i].index(0)
     if i > 0:                                   
-        m[i][j], m[i-1][j] = m[i-1][j], m[i][j];  
+        m[i][j], m[i-1][j] = m[i-1][j], m[i][j];  #move up
 
         output.append(('UP',copy.deepcopy(m)))
         m[i][j], m[i-1][j] = m[i-1][j], m[i][j]; 
     
       
     if i < (len(m)-1):                                   
-        m[i][j], m[i+1][j] = m[i+1][j], m[i][j]   
+        m[i][j], m[i+1][j] = m[i+1][j], m[i][j]   #move down
 
         output.append(('DOWN',copy.deepcopy(m)))
     
         m[i][j], m[i+1][j] = m[i+1][j], m[i][j]
         
     if j > 0:                                                      
-        m[i][j], m[i][j-1] = m[i][j-1], m[i][j]   
+        m[i][j], m[i][j-1] = m[i][j-1], m[i][j]   #move left
         output.append(('LEFT',copy.deepcopy(m)))
         m[i][j], m[i][j-1] = m[i][j-1], m[i][j]
 
     if j < (len(m)-1):                                   
-        m[i][j], m[i][j+1] = m[i][j+1], m[i][j]   
+        m[i][j], m[i][j+1] = m[i][j+1], m[i][j]   #move right
         output.append(('RIGHT',copy.deepcopy(m)))
         m[i][j], m[i][j+1] = m[i][j+1], m[i][j]
                  
@@ -79,18 +84,20 @@ def astar(p):
         current_node = current_path[-1] 
         
         if current_node == goal :
-            print(len(new_moves))
-            for m in new_moves:
+            print(len(current_moves))
+            for m in current_moves:
                 print(m)
             break
         
+	
         
         nexts = move(current_node)
+
 
         for m,n in nexts:
             if n in expanded:
                 continue
-            new_cost = cost - (heurestic(current_node)) + heurestic(n)
+            new_cost = cost - (heurestic(current_node)) + heurestic(n) + 1
 
             expanded.append(current_node)
             new_path = copy.deepcopy(current_path)
@@ -101,10 +108,14 @@ def astar(p):
             tree.put(new_cost,new_path,new_moves)
             
 puzze = []
-n = int(input())
+'''n = int(input())
 for i in range(n):
     row = []
     for j in range(n):
         row.append( int(input()))
-    puzze.append(row)
+    puzze.append(row)'''
+puzze = [[0,3,8],
+	[4,1,7],
+	[2,6,5]]
 astar(puzze)
+
